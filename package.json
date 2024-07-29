@@ -1,0 +1,17 @@
+{
+  "name": "app",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Monorepo for my personal apps, doodles and just experiments I'll likely never finish",
+  "scripts": {},
+  "workspaces": [
+    "packages/*"
+  ],
+  "author": "Patrick Swijgman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}
