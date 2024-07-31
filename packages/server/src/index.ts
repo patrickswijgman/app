@@ -1,7 +1,2 @@
-export { server } from "./server.js";
-export {
-  loadFile,
-  renderTemplate,
-  renderFile,
-  type Templates,
-} from "./utils.js";
+export * from "./main.js";
+export { loadFile } from "./utils.js";

@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "A simple web server with a templating engine",
+  "description": "A simple web server with a template engine",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "tsx watch src/index.ts"
+    "start": "tsx watch src/main.ts"
   },
   "author": "",
   "license": "ISC"

@@ -2,10 +2,9 @@
   "name": "recipes",
   "version": "1.0.0",
   "description": "My collection of recipes",
-  "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "tsx watch src/index.ts"
+    "start": "tsx watch src/main.ts"
   },
   "author": "",
   "license": "ISC",
