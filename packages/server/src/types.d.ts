@@ -1,13 +1,11 @@
 type Settings = {
-  server: {
-    host: string;
-    port: number;
-  };
+  host: string;
+  port: number;
 };
 
 type Content = {
   content: string;
-  type: "html" | "css" | "json" | string;
+  type: string;
 };
 
 type Templates = Record<string, string>;
@@ -18,4 +16,4 @@ type Config = {
   routes: Record<string, () => Content>;
 };
 
-type Obj = Record<string, any>;
+type Dict = Record<string, any>;

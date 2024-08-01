@@ -5,15 +5,13 @@ import {
   TEMPLATE_PARTIAL_REGEX,
   TEMPLATE_VAR_REGEX,
 } from "./consts.js";
-import { get, getContentType, loadFile } from "./utils.js";
+import { get, getContentType, read } from "./utils.js";
 
 const templates: Templates = {};
 
 const settings: Settings = {
-  server: {
-    host: "localhost",
-    port: 3000,
-  },
+  host: "localhost",
+  port: 3000,
 };
 
 /**
@@ -25,34 +23,31 @@ export function server(c: Config) {
 
   createServer((req, res) => {
     try {
-      const url = new URL(
-        `http://${settings.server.host}:${settings.server.port}${req.url}`,
-      );
-
+      const url = new URL(`http://${settings.host}:${settings.port}${req.url}`);
       const route = c.routes[url.pathname];
 
       if (route) {
-        serveContent(res, 200, route());
+        respond(res, 200, route());
       } else {
-        serveContent(res, 404, {
+        respond(res, 404, {
           content: "<h1>404 - Not Found</h1>",
           type: "html",
         });
       }
     } catch (e) {
-      serveContent(res, 500, {
+      respond(res, 500, {
         content: `<h1>500 - Internal Server Error</h1><hr/><p>${e}</p>`,
         type: "html",
       });
     }
   }).listen(
     {
-      host: settings.server.host,
-      port: settings.server.port,
+      host: settings.host,
+      port: settings.port,
     },
     () => {
       console.log(
-        `Server is running at http://${settings.server.host}:${settings.server.port}`,
+        `Server is running at http://${settings.host}:${settings.port}`,
       );
     },
   );
@@ -61,32 +56,39 @@ export function server(c: Config) {
 /**
  * Send a response with the given content.
  */
-function serveContent(
-  res: ServerResponse,
-  code: number,
+function respond(
+  response: ServerResponse,
+  statusCode: number,
   { content, type }: Content,
 ) {
-  res
+  response
     .setHeader("Content-Type", getContentType(type))
     .setHeader("Content-Length", Buffer.byteLength(content))
-    .writeHead(code)
+    .writeHead(statusCode)
     .end(content);
 }
 
 /**
- * Render the content of a file.
+ * Render the content of a file or a template.
  */
-export function renderFile(path: string): Content {
-  return {
-    content: loadFile(path),
-    type: extname(path).replace(".", ""),
-  };
+export function render(path: string, data: Dict = {}): Content {
+  if (path.includes(".")) {
+    return {
+      content: read(path),
+      type: extname(path).replace(".", ""),
+    };
+  } else {
+    return {
+      content: parseTemplate(path, data),
+      type: "html",
+    };
+  }
 }
 
 /**
- * Parse the input string resolving loops, variables, and (referenced) partials.
+ * Parse the template content; resolving loops, variables, and (referenced) partials.
  */
-function parse(input: string, data: Obj): string {
+function parse(input: string, data: Dict): string {
   return input
     .replaceAll(TEMPLATE_LOOP_REGEX, (_, name, key, content) => {
       const list = get(data, key);
@@ -120,13 +122,14 @@ function parse(input: string, data: Obj): string {
       }
 
       return parseTemplate(key, data);
-    });
+    })
+    .trim();
 }
 
 /**
  * Parse the content of an HTML template file.
  */
-function parseTemplate(id: string, data: Obj): string {
+function parseTemplate(id: string, data: Dict): string {
   const template = templates[id];
 
   if (template === undefined) {
@@ -134,14 +137,4 @@ function parseTemplate(id: string, data: Obj): string {
   }
 
   return parse(template, data);
-}
-
-/**
- * Render the content of an HTML template file.
- */
-export function renderTemplate(id: string, data: Obj = {}): Content {
-  return {
-    content: parseTemplate(id, data),
-    type: "html",
-  };
 }

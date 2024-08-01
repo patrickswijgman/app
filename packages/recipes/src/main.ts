@@ -1,19 +1,19 @@
-import { server, renderFile, loadFile, renderTemplate } from "server";
+import { server, render, read } from "server";
 import { recipes } from "./data.js";
 
 server({
   templates: {
-    base: loadFile("templates/base.html"),
-    recipes: loadFile("templates/recipes.html"),
-    recipe: loadFile("templates/recipe.html"),
+    base: read("templates/base.html"),
+    recipes: read("templates/recipes.html"),
+    recipe: read("templates/recipe.html"),
   },
   routes: {
     "/": () =>
-      renderTemplate("base", {
+      render("base", {
         title: "Recipes",
         content: "recipes",
         recipes,
       }),
-    "/style.css": () => renderFile("public/style.css"),
+    "/style.css": () => render("public/style.css"),
   },
 });

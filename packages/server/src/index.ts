@@ -1,2 +1,2 @@
 export * from "./main.js";
-export { loadFile } from "./utils.js";
+export { read } from "./utils.js";

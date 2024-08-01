@@ -26,13 +26,13 @@ export function getContentType(type: string) {
 /**
  * Get the value of a nested key in an object.
  */
-export function get<T>(obj: Obj, key: string) {
+export function get<T>(obj: Dict, key: string) {
   return key.split(".").reduce((v, k) => v[k], obj) as T;
 }
 
 /**
  * Load a file from the file system.
  */
-export function loadFile(path: string) {
+export function read(path: string) {
   return readFileSync(path, "utf8");
 }
